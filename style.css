@@ -628,8 +628,8 @@ main { overflow-x: clip; }
   .sec-final .btn-cta { min-height: 88px; }
 }
 
-/* sample1・sample2 共通：色面を薄い黄緑にする。白文字が読めなくなる 2 行目の見出しは、墨の帯の上に白文字で置く */
-:root { --c-green: #93e17f; }
+/* sample1・sample2 共通：色面を既存 N-Free の緑（#21b384）にする。2 行目の見出しは、墨の帯の上に白文字で置く */
+:root { --c-green: #21b384; }
 .hero-title-accent { isolation: isolate; padding: 0 .1em; color: #fff; animation: wipe-right .8s cubic-bezier(.77, 0, .18, 1) 1.45s both; }
 .hero-title-accent::after { z-index: -1; inset: 6% 0 4% 0; transform: none; animation: none; }
 .hero-subtitle strong { background-image: linear-gradient(rgba(255, 255, 255, .85), rgba(255, 255, 255, .85)); }
@@ -648,6 +648,6 @@ main { overflow-x: clip; }
 @keyframes n-float { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(-2.5%, 2%, 0) scale(1.05); } }
 .sec-final .bg-n { top: -30%; height: 170%; right: 2%; }
 @media (max-width: 768px) {
-  .bg-n { top: auto; bottom: -2%; right: -24%; height: auto; width: 118%; }
+  .bg-n { top: auto; top: 1%; bottom: auto; right: -30%; height: auto; width: 128%; }
   .sec-final .bg-n { top: -10%; bottom: auto; height: auto; width: 130%; right: -40%; }
 }
