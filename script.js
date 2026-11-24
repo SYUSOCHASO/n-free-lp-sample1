@@ -285,24 +285,20 @@ $(function(){
 })();
 
 /* ------------------------------------------------------------
-   背景C：棒グラフ。左から右へ高くなる棒を並べ、それぞれ違う速さで伸び縮みさせる
+   背景C：巨大な「N」の線画。一筆書きで描かれ、その後は線の上を光が走る（動きは CSS）
 ------------------------------------------------------------ */
 (function () {
+    var N = 'M0 600V0H150L450 370V0H600V600H450L150 230V600Z';
+    var svg = '<svg class="bg-n" viewBox="0 0 760 680" aria-hidden="true" focusable="false"><g transform="translate(140 40) skewX(-12)">';
+    for (var i = 3; i >= 1; i--) {
+        svg += '<path class="n-echo" pathLength="1000" style="--i:' + i + '" transform="translate(' + (i * 30) + ' ' + (i * -20) + ')" d="' + N + '"/>';
+    }
+    svg += '<path class="n-fill" d="' + N + '"/>'
+        + '<path class="n-main" pathLength="1000" d="' + N + '"/>'
+        + '<path class="n-run" pathLength="1000" d="' + N + '"/>'
+        + '<path class="n-run2" pathLength="1000" transform="translate(60 -40)" d="' + N + '"/>'
+        + '</g></svg>';
     Array.prototype.forEach.call(document.querySelectorAll('.hero, .sec-final'), function (host) {
-        var wrap = document.createElement('div');
-        wrap.className = 'bg-bars';
-        wrap.setAttribute('aria-hidden', 'true');
-        var count = Math.max(8, Math.min(18, Math.round(host.clientWidth / 84)));
-        for (var i = 0; i < count; i++) {
-            var bar = document.createElement('span');
-            var trend = 20 + 58 * (i / (count - 1));                 // 右肩上がり
-            var height = Math.max(12, Math.min(92, trend + (Math.random() * 26 - 13)));
-            bar.style.setProperty('--h', height.toFixed(1) + '%');
-            bar.style.setProperty('--a', (0.5 + Math.random() * 0.32).toFixed(2));   // 縮んだときの高さの割合
-            bar.style.setProperty('--t', (2.6 + Math.random() * 2.8).toFixed(2) + 's');
-            bar.style.setProperty('--dl', (-Math.random() * 5).toFixed(2) + 's');
-            wrap.appendChild(bar);
-        }
-        host.insertBefore(wrap, host.firstChild);
+        host.insertAdjacentHTML('afterbegin', svg);
     });
 })();

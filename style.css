@@ -628,9 +628,26 @@ main { overflow-x: clip; }
   .sec-final .btn-cta { min-height: 88px; }
 }
 
-/* 背景C：右肩上がりの棒グラフが、呼吸するように伸び縮みし続ける（棒は script.js が並べる） */
-.bg-bars { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: clamp(6px, 1.3vw, 20px); padding: 0 clamp(8px, 2vw, 32px); pointer-events: none; transform-origin: 50% 100%; animation: bars-in 1.4s var(--ease-out) .3s both; }
-.bg-bars span { flex: 1; height: var(--h); background: rgba(255, 255, 255, .17); border-top: 3px solid rgba(255, 255, 255, .5); transform-origin: 50% 100%; animation: bar-breathe var(--t) ease-in-out var(--dl) infinite alternate; }
-.bg-bars span:nth-child(3n) { background: rgba(0, 0, 0, .05); border-top-color: rgba(0, 0, 0, .16); }
-@keyframes bars-in { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-@keyframes bar-breathe { from { transform: scaleY(var(--a)); } to { transform: scaleY(1); } }
+/* sample1・sample2 共通：色面を薄い黄緑にする。白文字が読めなくなる 2 行目の見出しは、墨の帯の上に白文字で置く */
+:root { --c-green: #93e17f; }
+.hero-title-accent { isolation: isolate; padding: 0 .1em; color: #fff; animation: wipe-right .8s cubic-bezier(.77, 0, .18, 1) 1.45s both; }
+.hero-title-accent::after { z-index: -1; inset: 6% 0 4% 0; transform: none; animation: none; }
+.hero-subtitle strong { background-image: linear-gradient(rgba(255, 255, 255, .85), rgba(255, 255, 255, .85)); }
+
+/* 背景C：巨大な「N」が一筆書きで描かれ、描き終わったあとも線の上を光が走り続ける（SVG は script.js が置く） */
+.bg-n { position: absolute; top: -3%; right: -3%; height: 106%; aspect-ratio: 760 / 680; overflow: visible; pointer-events: none; animation: n-float 16s ease-in-out 3s infinite alternate; }
+.bg-n path { fill: none; stroke-linejoin: miter; stroke-dasharray: 1000; }
+.bg-n .n-main { stroke: #fff; stroke-width: 3; animation: n-draw 2.6s cubic-bezier(.65, 0, .35, 1) .5s both; }
+.bg-n .n-fill { stroke: none; fill: rgba(255, 255, 255, .2); animation: n-show 1.4s ease-out 2.6s both; }
+.bg-n .n-echo { stroke: rgba(18, 18, 18, .2); stroke-width: 1.5; animation: n-draw 2.6s cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(.7s + var(--i) * .22s); }
+.bg-n .n-run { stroke: #fff; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 70 930; opacity: 0; animation: n-run 7s linear 3.1s infinite, n-show .8s ease-out 3.1s both; }
+.bg-n .n-run2 { stroke: rgba(18, 18, 18, .55); stroke-width: 2; stroke-dasharray: 36 964; opacity: 0; animation: n-run 11s linear 3.6s infinite reverse, n-show .8s ease-out 3.6s both; }
+@keyframes n-draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+@keyframes n-run { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+@keyframes n-show { from { opacity: 0; } to { opacity: 1; } }
+@keyframes n-float { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(-2.5%, 2%, 0) scale(1.05); } }
+.sec-final .bg-n { top: -30%; height: 170%; right: 2%; }
+@media (max-width: 768px) {
+  .bg-n { top: auto; bottom: -2%; right: -24%; height: auto; width: 118%; }
+  .sec-final .bg-n { top: -10%; bottom: auto; height: auto; width: 130%; right: -40%; }
+}
