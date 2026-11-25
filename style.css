@@ -679,15 +679,14 @@ main { overflow-x: clip; }
 .hero::before, .hero::after { pointer-events: none; }
 .hero-bg { position: absolute; pointer-events: none; }
 
-/* 案1：白地 × 緑。小さな図形（輪・丸・角丸・半円・十字）がトップ全体に散らばり、それぞれゆっくり漂う（図形は script.js が置く） */
+/* 案1：白地 × 緑。確定申告まわりのアイコン（カメラ・書類・電卓・円・グラフ・カレンダー・チャット・チェック）の丸いバッジが、トップ全体にゆっくり浮かぶ（バッジは script.js が置く） */
 .hero { --h-bg: #fff; --h-text: #121212; --h-accent: #21b384; --h-line: #121212; --h-chip-bg: #121212; --h-chip-text: #fff; --h-btn-bg: #121212; --h-btn-text: #fff; --h-tag-bg: #fff; --h-tag-text: #121212; --h-marker: rgba(33, 179, 132, .3); border-bottom: 1px solid var(--c-line); }
-.k-bits { inset: 0; font-size: 10px; animation: q-fade 1.8s ease-out both; }
-.k-bits i { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); animation: k-float var(--t) ease-in-out var(--dl) infinite alternate; }
-.k-ring { border: calc(var(--s) * .17) solid var(--c); border-radius: 50%; }
-.k-dot { background: var(--c); border-radius: 50%; }
-.k-sq { background: var(--c); border-radius: 24%; }
-.k-half { background: var(--c); border-radius: 999px 999px 0 0; height: calc(var(--s) / 2) !important; }
-.k-plus { background: linear-gradient(var(--c), var(--c)) center / 100% 26% no-repeat, linear-gradient(var(--c), var(--c)) center / 26% 100% no-repeat; }
-.k-soft { filter: blur(3px); }
-@keyframes k-float { from { translate: 0 0; rotate: 0deg; } to { translate: var(--dx) var(--dy); rotate: var(--r); } }
-@media (max-width: 768px) { .k-bits { font-size: 6.2px; } }
+.i-badges { inset: 0; font-size: 10px; animation: q-fade 1.8s ease-out both; }
+.i-badges i { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); margin: calc(var(--s) / -2); border-radius: 50%; display: grid; place-items: center; animation: i-float var(--t) ease-in-out var(--dl) infinite alternate; }
+.i-badges svg { width: 52%; height: 52%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.i-g { background: #21b384; color: #fff; box-shadow: 0 1em 2em rgba(33, 179, 132, .28); }
+.i-m { background: #dff5ec; color: #21b384; }
+.i-w { background: #fff; color: #21b384; box-shadow: 0 1em 2.4em rgba(18, 18, 18, .1), 0 0 0 1px rgba(18, 18, 18, .04); }
+.i-k { background: #121212; color: #fff; box-shadow: 0 1em 2em rgba(18, 18, 18, .2); }
+@keyframes i-float { from { translate: 0 0; rotate: var(--r0); } to { translate: var(--dx) var(--dy); rotate: var(--r1); } }
+@media (max-width: 768px) { .i-badges { font-size: 6.4px; } }
