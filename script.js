@@ -283,22 +283,3 @@ $(function(){
     window.addEventListener('load', request);
     request();
 })();
-
-/* ------------------------------------------------------------
-   背景C：巨大な「N」の線画。一筆書きで描かれ、その後は線の上を光が走る（動きは CSS）
------------------------------------------------------------- */
-(function () {
-    var N = 'M0 600V0H150L450 370V0H600V600H450L150 230V600Z';
-    var svg = '<svg class="bg-n" viewBox="0 0 760 680" aria-hidden="true" focusable="false"><g transform="translate(140 40) skewX(-12)">';
-    for (var i = 3; i >= 1; i--) {
-        svg += '<path class="n-echo" pathLength="1000" style="--i:' + i + '" transform="translate(' + (i * 30) + ' ' + (i * -20) + ')" d="' + N + '"/>';
-    }
-    svg += '<path class="n-fill" d="' + N + '"/>'
-        + '<path class="n-main" pathLength="1000" d="' + N + '"/>'
-        + '<path class="n-run" pathLength="1000" d="' + N + '"/>'
-        + '<path class="n-run2" pathLength="1000" transform="translate(60 -40)" d="' + N + '"/>'
-        + '</g></svg>';
-    Array.prototype.forEach.call(document.querySelectorAll('.hero, .sec-final'), function (host) {
-        host.insertAdjacentHTML('afterbegin', svg);
-    });
-})();
