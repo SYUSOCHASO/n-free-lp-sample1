@@ -682,11 +682,11 @@ main { overflow-x: clip; }
 /* 案1：白地 × 緑。確定申告まわりのアイコン（カメラ・書類・電卓・円・グラフ・カレンダー・チャット・チェック）の丸いバッジが、トップ全体にゆっくり浮かぶ（バッジは script.js が置く） */
 .hero { --h-bg: #fff; --h-text: #121212; --h-accent: #21b384; --h-line: #121212; --h-chip-bg: #121212; --h-chip-text: #fff; --h-btn-bg: #121212; --h-btn-text: #fff; --h-tag-bg: #fff; --h-tag-text: #121212; --h-marker: rgba(33, 179, 132, .3); border-bottom: 1px solid var(--c-line); }
 .i-badges { inset: 0; font-size: 10px; animation: q-fade 1.8s ease-out both; }
-.i-badges i { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); margin: calc(var(--s) / -2); border-radius: 50%; display: grid; place-items: center; animation: i-float var(--t) ease-in-out var(--dl) infinite alternate; }
+.i-badges i { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); margin: calc(var(--s) / -2); border-radius: 50%; display: grid; place-items: center; animation: i-float calc(var(--t) * .78) ease-in-out var(--dl) infinite alternate; }
 .i-badges svg { width: 52%; height: 52%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .i-g { background: #21b384; color: #fff; box-shadow: 0 1em 2em rgba(33, 179, 132, .28); }
 .i-m { background: #dff5ec; color: #21b384; }
 .i-w { background: #fff; color: #21b384; box-shadow: 0 1em 2.4em rgba(18, 18, 18, .1), 0 0 0 1px rgba(18, 18, 18, .04); }
 .i-k { background: #121212; color: #fff; box-shadow: 0 1em 2em rgba(18, 18, 18, .2); }
-@keyframes i-float { from { translate: 0 0; rotate: var(--r0); } to { translate: var(--dx) var(--dy); rotate: var(--r1); } }
+@keyframes i-float { from { translate: calc(var(--dx) * -.5) calc(var(--dy) * -.5); rotate: calc(var(--r0) * 1.6); } to { translate: calc(var(--dx) * 1.2) calc(var(--dy) * 1.2); rotate: calc(var(--r1) * 1.6); } }
 @media (max-width: 768px) { .i-badges { font-size: 6.4px; } }
