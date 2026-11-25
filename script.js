@@ -285,32 +285,51 @@ $(function(){
 })();
 
 /* ------------------------------------------------------------
-   案1：浮かぶアイコン。[左%, 上%, 直径em, アイコン, 色(g=緑 m=淡い緑 w=白 k=墨), 周期s, 横の揺れem, 縦の揺れem]（動きは CSS）
+   背景パターン「撮る→記帳される」：座標はスマホ画像の中心を (0,0) とした px。
+   レシートは道筋に沿って中心へ向かいながら小さくなり、行は中心から出て大きくなる。PC 用とスマホ用で道筋を分ける
 ------------------------------------------------------------ */
 (function () {
     var host = document.querySelector('.hero');
     if (!host) return;
-    var icons = {
-        camera: '<path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/>',
-        doc: '<path d="M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5"/>',
-        calc: '<rect x="6" y="3" width="12" height="18" rx="1.5"/><path d="M9 7.5h6M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/>',
-        check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
-        yen: '<path d="M7 4l5 8 5-8M12 12v8M8 13h8M8 16.5h8"/>',
-        chart: '<path d="M3 20h18M6 20v-7M11 20V6M16 20v-10"/>',
-        cal: '<rect x="4" y="6" width="16" height="14" rx="1.5"/><path d="M4 10.5h16M8 4v4M16 4v4"/>',
-        chat: '<path d="M4 5h16v11H10l-4 4v-4H4z"/>'
-    };
-    var list = [
-        [4, 13, 8, 'camera', 'g', 6.5, 1.6, 3.4], [15, 86, 6.4, 'yen', 'w', 7.5, 2, -3.6], [37, 3, 5, 'check', 'm', 5.5, 1.2, 2.8],
-        [41, 92, 7, 'doc', 'm', 8, -2, -3], [50, 12, 5.6, 'calc', 'w', 6, 1.6, 3], [55, 63, 8.6, 'chart', 'w', 8.5, -2.2, 3.6],
-        [61, 33, 4.4, 'yen', 'm', 5.5, 1.4, -2.6], [66, 86, 6, 'cal', 'g', 7, -1.8, -3.2], [72, 8, 7.4, 'chat', 'm', 7.5, 2, 3],
-        [86, 92, 7.6, 'camera', 'w', 6.5, 1.8, -3.4], [96, 22, 6.4, 'doc', 'g', 7, -2, 3.4], [97, 62, 5, 'check', 'k', 6, -1.4, -2.8],
-        [3, 52, 4.6, 'calc', 'm', 6, 1.4, 2.6]
-    ];
-    var html = '<div class="hero-bg i-badges" aria-hidden="true">';
-    list.forEach(function (b, i) {
-        html += '<i class="i-' + b[4] + '" style="--x:' + b[0] + '%;--y:' + b[1] + '%;--s:' + b[2] + 'em;--t:' + b[5] + 's;--dl:-' + (i * 1.1).toFixed(1)
-            + 's;--dx:' + b[6] + 'em;--dy:' + b[7] + 'em;--r0:' + (i % 2 ? 6 : -6) + 'deg;--r1:' + (i % 2 ? -8 : 8) + 'deg"><svg viewBox="0 0 24 24" focusable="false">' + icons[b[3]] + '</svg></i>';
-    });
-    host.insertAdjacentHTML('afterbegin', html + '</div>');
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var receipt = '<rect class="w-shade" x="-17" y="-22" width="40" height="56" rx="2"/><rect class="w-paper" x="-20" y="-28" width="40" height="56" rx="2"/>'
+        + '<rect class="w-print" x="-13" y="-19" width="26" height="3.4" rx="1.7"/><rect class="w-print" x="-13" y="-11" width="17" height="3.4" rx="1.7"/>'
+        + '<rect class="w-print" x="-13" y="-3" width="26" height="3.4" rx="1.7"/><rect class="w-print" x="-13" y="5" width="20" height="3.4" rx="1.7"/><rect class="w-mark" x="1" y="16" width="12" height="4" rx="2"/>';
+    var row = '<rect class="w-shade" x="-49" y="-11" width="104" height="32" rx="16"/><rect class="w-paper" x="-52" y="-16" width="104" height="32" rx="16"/>'
+        + '<circle class="w-mark" cx="-36" cy="0" r="10"/><path class="w-tick" d="M-41 0.4l3.4 3.4L-31 -3.4"/>'
+        + '<rect class="w-print" x="-20" y="-2.4" width="40" height="4.8" rx="2.4"/><rect class="w-mark" x="28" y="-2.4" width="14" height="4.8" rx="2.4"/>';
+    function mover(shape, d, dur, begin, tilt, into) {
+        var motion = still ? '' : '<animateMotion dur="' + dur + 's" begin="' + begin + 's" repeatCount="indefinite" path="' + d + '"'
+            + (into ? ' keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".4 0 .9 .6"' : ' keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".1 .5 .5 1"') + '/>';
+        var fade = still ? '' : '<animate attributeName="opacity" values="' + (into ? '0;1;1;0' : '0;1;1;0') + '" keyTimes="' + (into ? '0;.12;.9;1' : '0;.15;.8;1') + '" dur="' + dur + 's" begin="' + begin + 's" repeatCount="indefinite"/>';
+        var size = still ? '' : '<animateTransform attributeName="transform" type="scale" values="' + (into ? '1;1;.3' : '.3;1;1') + '" keyTimes="' + (into ? '0;.7;1' : '0;.3;1') + '" dur="' + dur + 's" begin="' + begin + 's" repeatCount="indefinite"/>';
+        return '<g opacity="0">' + motion + fade + '<g>' + size + '<g transform="rotate(' + tilt + ')">' + shape + '</g></g></g>';
+    }
+    function set(cls, ins, outs, halo) {
+        var g = '<g class="' + cls + '"><circle class="w-halo" r="' + halo + '"/>';
+        if (!still) g += '<circle class="w-pulse" r="' + halo + '"><animate attributeName="r" values="' + (halo * .7) + ';' + (halo * 1.5) + '" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;0" dur="2.6s" repeatCount="indefinite"/></circle>';
+        ins.forEach(function (d, i) { g += mover(receipt, d, 7 + (i % 3), -(i * 1.37).toFixed(2), [-12, 9, -6, 14, -9, 7, -14][i % 7], true); });
+        outs.forEach(function (d, i) { g += mover(row, d, 6 + (i % 2), -(i * 2.1).toFixed(2), [-5, 4, -3][i % 3], false); });
+        return g + '</g>';
+    }
+    host.insertAdjacentHTML('afterbegin', '<svg class="hero-bg w-flow" aria-hidden="true" focusable="false">'
+        + set('w-pc',
+            ['M-1180 -250C-820 -420 -420 -300 0 0', 'M-1180 130C-780 270 -380 180 0 0', 'M-720 -520C-540 -300 -260 -200 0 0', 'M-640 520C-470 300 -240 160 0 0',
+             'M-1220 -30C-820 -90 -400 40 0 0', 'M-300 -540C-340 -340 -160 -150 0 0', 'M-980 460C-700 360 -320 240 0 0'],
+            ['M0 0C60 -220 130 -330 300 -440', 'M0 0C70 220 130 330 300 440', 'M0 0C150 -40 240 -20 380 -70', 'M0 0C-80 -240 -200 -330 -380 -400'], 250)
+        + set('w-sp',
+            ['M-150 -760C-230 -500 -120 -260 0 0', 'M160 -720C250 -460 120 -240 0 0', 'M-240 -430C-210 -260 -100 -120 0 0', 'M250 -390C210 -240 100 -100 0 0',
+             'M10 -800C70 -560 -40 -280 0 0', 'M-230 -620C-120 -420 -160 -200 0 0'],
+            ['M0 0C-80 -60 -130 -150 -150 -230', 'M0 0C80 30 130 90 150 150', 'M0 0C80 -80 130 -140 140 -220'], 140)
+        + '</svg>');
+    // 図の原点を、スマホ画像の中心に合わせる（浮く動きに引きずられないよう、レイアウト上の位置で測る）
+    var svg = host.firstElementChild, inner = host.querySelector('.hero-inner'), visual = host.querySelector('.hero-visual');
+    function place() {
+        if (!inner || !visual) return;
+        svg.style.setProperty('--px', (inner.offsetLeft + visual.offsetLeft + visual.offsetWidth / 2) + 'px');
+        svg.style.setProperty('--py', (inner.offsetTop + visual.offsetTop + visual.offsetHeight / 2) + 'px');
+    }
+    place();
+    window.addEventListener('resize', place);
+    window.addEventListener('load', place);
 })();
