@@ -283,3 +283,55 @@ $(function(){
     window.addEventListener('load', request);
     request();
 })();
+
+/* ------------------------------------------------------------
+   案1：流れる曲線。細い線の束がゆっくりうねり続ける。画面外では描画を止める
+------------------------------------------------------------ */
+(function () {
+    var host = document.querySelector('.hero');
+    if (!host) return;
+    var canvas = document.createElement('canvas');
+    canvas.className = 'hero-bg';
+    canvas.setAttribute('aria-hidden', 'true');
+    host.insertBefore(canvas, host.firstChild);
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var w = 0, h = 0, dpr = 1, running = false, lines = [];
+    for (var i = 0; i < 11; i++) {
+        lines.push({ amp: 30 + i * 6, k: 0.0017 + i * 0.00019, speed: 0.00022 + i * 0.000035, phase: i * 0.62, offset: (i - 5) * 15, alpha: 0.14 + 0.07 * (i % 4) });
+    }
+    function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = host.clientWidth; h = host.clientHeight;
+        canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    }
+    function draw(now) {
+        var mobile = w < 768;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        ctx.lineWidth = 1.25;
+        lines.forEach(function (l) {
+            var amp = l.amp * (mobile ? 0.5 : 1), k = l.k * (mobile ? 2.4 : 1);
+            ctx.beginPath();
+            for (var x = -20; x <= w + 20; x += 10) {
+                // PC は左下から右上へ、スマホは最初の画面の上のほうを横切る
+                var base = mobile ? 190 + l.offset * 0.55 - x * 0.2 : h * 0.78 + l.offset - (x / w) * h * 0.56;
+                var y = base + amp * Math.sin(x * k + now * l.speed + l.phase) + amp * 0.4 * Math.sin(x * k * 2.3 - now * l.speed * 1.7 + l.phase * 2);
+                if (x === -20) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = 'rgba(33,179,132,' + l.alpha + ')';
+            ctx.stroke();
+        });
+    }
+    function visible() { var r = host.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight && !document.hidden; }
+    function loop(now) { if (!visible()) { running = false; return; } draw(now); requestAnimationFrame(loop); }
+    function start() { if (!running && !reduce && visible()) { running = true; requestAnimationFrame(loop); } }
+    resize();
+    if (window.ResizeObserver) new ResizeObserver(function () { resize(); if (reduce) draw(0); }).observe(host);
+    window.addEventListener('resize', resize);
+    if (reduce) { draw(0); return; }
+    window.addEventListener('scroll', start, { passive: true });
+    document.addEventListener('visibilitychange', start);
+    start();
+})();

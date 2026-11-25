@@ -677,15 +677,8 @@ main { overflow-x: clip; }
 @keyframes q-phone { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
 @keyframes q-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-12px) rotate(-1deg); } }
 .hero::before, .hero::after { pointer-events: none; }
+.hero-bg { position: absolute; pointer-events: none; }
 
-/* 案1：白地 × 緑のアクセント。淡い円がゆっくり呼吸し、そこから輪が波紋のように広がっていく */
-.hero { --h-bg: #fff; --h-text: #121212; --h-accent: #21b384; --h-line: #121212; --h-chip-bg: #121212; --h-chip-text: #fff; --h-btn-bg: #121212; --h-btn-text: #fff; --h-tag-bg: #fff; --h-tag-text: #121212; --h-marker: rgba(33, 179, 132, .3); border-bottom: 1px solid var(--c-line); --d: min(52vw, 760px); }
-.hero::before, .hero::after { content: ""; position: absolute; right: -6%; top: 50%; width: var(--d); aspect-ratio: 1; margin-top: calc(var(--d) / -2); border-radius: 50%; }
-.hero::before { background: #e6f6f0; animation: q-fade 1.6s ease-out both, h1-breathe 6s ease-in-out 1.6s infinite alternate; }
-.hero::after { border: 1.5px solid #21b384; opacity: 0; animation: h1-ripple 5s cubic-bezier(.2, .6, .3, 1) 2s infinite; }
-@keyframes h1-breathe { from { transform: scale(1); } to { transform: scale(1.08); } }
-@keyframes h1-ripple { 0% { opacity: 0; transform: scale(.8); } 15% { opacity: .55; } 100% { opacity: 0; transform: scale(1.35); } }
-@media (max-width: 768px) {
-  .hero { --d: 330px; }
-  .hero::before, .hero::after { right: -130px; top: -90px; margin-top: 0; }
-}
+/* 案1：白地 × 緑のアクセント。細い曲線の束が、絹の帯のようにうねりながら流れ続ける（描画は script.js） */
+.hero { --h-bg: #fff; --h-text: #121212; --h-accent: #21b384; --h-line: #121212; --h-chip-bg: #121212; --h-chip-text: #fff; --h-btn-bg: #121212; --h-btn-text: #fff; --h-tag-bg: #fff; --h-tag-text: #121212; --h-marker: rgba(33, 179, 132, .3); border-bottom: 1px solid var(--c-line); }
+canvas.hero-bg { inset: 0; width: 100%; height: 100%; animation: q-fade 2s ease-out both; }
